@@ -72,10 +72,14 @@ $(document).ready(function () {
         "http://openweathermap.org/img/w/" + response.weather[0].icon + ".png"
       );
 
+      function KtoF(temp) {
+        return (temp - 273.15) * 1.8 + 32;
+      }
+
       //temp and humidity
       var temp = $("<p>")
         .addClass("card-text")
-        .text("Temperature: " + response.main.temp + "°F");
+        .text("Temperature: " + KtoF(response.main.temp).toFixed(2) + "°F");
       var hum = $("<p>")
         .addClass("card-text")
         .text("Humidity: " + response.main.humidity + "%");
@@ -97,13 +101,15 @@ $(document).ready(function () {
       $("#currentCity").append(card);
 
       //call other two functions for ajax calls for the forecast pass in the city and  UX index pass in lon and lat
-      fiveDayForecast(city);
+      // fiveDayForecast(city);
 
-      getuvIndex(response.coord.lat, response.coord.lon);
+      //getuvIndex(response.coord.lat, response.coord.lon);
     });
   }
 
   function fiveDayForecast(city) {
+    var APIKey = "c55a69a863d405f6eb7cfe74c3391a16";
+
     var queryUrl =
       "http://api.openweathermap.org/data/2.5/weather?q=" +
       city +
@@ -158,8 +164,9 @@ $(document).ready(function () {
 
       // console.log(response);
 
-      var tempFah = (K - 273.15) * 1.8 + 32;
-      tempFah = Math.floor(tempFah);
+      function KtoF(temp) {
+        return (temp - 273.15) * 1.8 + 32;
+      }
     });
   }
 
@@ -186,8 +193,10 @@ $(document).ready(function () {
       var btn = $("<span>").addClass(" btn btn-sm").text(response.value);
       $("#currentCity .card-body").append(UVIndex.append(btn));
 
-      var tempFah = (K - 273.15) * 1.8 + 32;
-      tempFah = Math.floor(tempFah);
+      function KtoF(temp) {
+        return (temp - 273.15) * 1.8 + 32;
+      }
+
       ///the output of this function will be appended to current city
     });
   }
