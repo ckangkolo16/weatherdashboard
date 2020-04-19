@@ -16,7 +16,7 @@ $(document).ready(function () {
   ///function to append new cities
   function createList(text) {
     var li = $("<li>").addClass("list-group-item").text(text);
-    $(".cityList").append(li);
+    $(".cityList").prepend(li);
   }
 
   //current date
@@ -101,7 +101,7 @@ $(document).ready(function () {
       $("#currentCity").append(card);
 
       //call other two functions for ajax calls for the forecast pass in the city and  UX index pass in lon and lat
-      // fiveDayForecast(city);
+      fiveDayForecast(city);
 
       //getuvIndex(response.coord.lat, response.coord.lon);
     });
@@ -123,49 +123,54 @@ $(document).ready(function () {
     }).then(function (response) {
       console.log(response);
 
-      //response.list.length
+      $("#forecast5").empty();
 
-      //for (var i = 0; i < response.list.length; i++) {
-      // $("#forecastDate" + i).text;
-      // $("#forecastIcon" + i).text;
-      // $("#forecastTemp" + i).text;
-      // $("#forecastHum" + i).text;
+      for (var i = 0; i <= 4; i++) {
+        console.log(i);
 
-      if (response.list[i].dt_txt.indexOf("15:00:00") !== -1) {
-        //small columns for each card
-        var columns = $("<div>").addClass("col-md-2");
-        //a card to load blue card with white text
-        var card = $("<div>").addClass("card bg-primary text-white");
-        //card body to attatch this to
-        var cardbody = $("<div").addClass("card-body");
-        //title for csard
-        var title = $("<h>")
-          .addClass("card-title")
-          .text(new Date(response.list[i].dt_txt).toLocaleDateString());
-        //img icon for each card
-        var image = $("<img>").attr(
-          "src",
-          "http://openweathermap.org/img/w/" +
-            response.list[i].weather[0].icon +
-            ".png"
-        );
-        //temp and humidity
-        var temp = $("<p>")
-          .addClass("card-text")
-          .text("Temperature" + response.list[i].main.temp);
-        var hum = $("<p>")
-          .addClass("card-text")
-          .text("Humidity" + response.list[i].main.humidity);
-        //take the column and append it to the the card then card body then append the tittle
+        var forecastDate = moment()
+          .add(1 + i, "days")
+          .format("MM/DD/YYY");
+        var forecastIcon = response.list[i].weather[0].icon;
+        var forecastTemp = Math.round(response.list[i].main.temp);
+        var forecastHum = response.list[i].main.humidity;
 
-        columns.append(card.append(cardbody.append(title, image, temp, hum)));
-      }
-      //}
+        if (response.list[i].dt_txt.indexOf("15:00:00") !== -1) {
+          //small columns for each card
+          var columns = $("<div>").addClass("col-md-2");
+          //a card to load blue card with white text
+          var card = $("<div>").addClass("card bg-primary text-white");
+          //card body to attatch this to
+          var cardbody = $("<div").addClass("card-body");
+          //title for csard
+          var title = $("<h>")
+            .addClass("card-title")
+            .text(new Date(response.list[i].dt_txt).toLocaleDateString());
+          //img icon for each card
+          var image = $("<img>").attr(
+            "src",
+            "http://openweathermap.org/img/w/" +
+              response.list[i].weather[0].icon +
+              ".png"
+          );
+          //temp and humidity
+          var temp = $("<p>")
+            .addClass("card-text")
+            .text("Temperature" + response.list[i].main.temp);
+          var hum = $("<p>")
+            .addClass("card-text")
+            .text("Humidity" + response.list[i].main.humidity);
+          //take the column and append it to the the card then card body then append the tittle
 
-      // console.log(response);
+          columns.append(card.append(cardbody.append(title, image, temp, hum)));
+        }
+        //}
 
-      function KtoF(temp) {
-        return (temp - 273.15) * 1.8 + 32;
+        // console.log(response);
+
+        function KtoF(temp) {
+          return (temp - 273.15) * 1.8 + 32;
+        }
       }
     });
   }
@@ -215,4 +220,10 @@ $(document).ready(function () {
       createList(cityList[i]);
     }
   }
+});
+
+$(document).on("click", ".city", function () {
+  var city = $(this).attr("data-name");
+  currentCondition(city);
+  fiveDayForecast(city);
 });
