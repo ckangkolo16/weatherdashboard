@@ -15,7 +15,7 @@ $(document).ready(function () {
 
   ///function to append new cities
   function createList(text) {
-    var li = $("<li>").addClass("list-group-item").text(text);
+    var li = $("<li>").addClass("list-group-item list-group-item-action").text(text);
     $(".cityList").prepend(li);
   }
 
@@ -110,42 +110,42 @@ $(document).ready(function () {
   function fiveDayForecast(city) {
     var APIKey = "c55a69a863d405f6eb7cfe74c3391a16";
 
-    var queryUrl =
-      "http://api.openweathermap.org/data/2.5/weather?q=" +
+    var queryUrl2 =
+      "http://api.openweathermap.org/data/2.5/forecast?q=" +
       city +
       "&appid=" +
       APIKey;
 
     $.ajax({
-      url: queryUrl,
+      url: queryUrl2,
       method: "GET",
       dataType: "json",
     }).then(function (response) {
-      console.log(response);
+      //  console.log(response);
+      $("#forecast")
+        .html('<h4 class="mt-3">5-Day Forecast: </h4>')
+        .append('<div class="row">');
 
-      $("#forecast5").empty();
+      //loop over all forecasts
+      for (var i = 0; i < response.list.length; i++) {
+        console.log(response.list);
 
-      for (var i = 0; i <= 4; i++) {
-        console.log(i);
-
-        var forecastDate = moment()
-          .add(1 + i, "days")
-          .format("MM/DD/YYY");
-        var forecastIcon = response.list[i].weather[0].icon;
-        var forecastTemp = Math.round(response.list[i].main.temp);
-        var forecastHum = response.list[i].main.humidity;
-
+        // var forecastDate = moment()
+        //   .add(1 + i, "days")
+        ///    .format("MM/DD/YYY");
         if (response.list[i].dt_txt.indexOf("15:00:00") !== -1) {
+          console.log(response.list[i].dt_txt);
           //small columns for each card
           var columns = $("<div>").addClass("col-md-2");
           //a card to load blue card with white text
           var card = $("<div>").addClass("card bg-primary text-white");
           //card body to attatch this to
-          var cardbody = $("<div").addClass("card-body");
+          var cardbody = $("<div").addClass("card-body p-2");
           //title for csard
-          var title = $("<h>")
+          var title = $("<h5>")
             .addClass("card-title")
             .text(new Date(response.list[i].dt_txt).toLocaleDateString());
+          console.log(response.list[i].dt_txt);
           //img icon for each card
           var image = $("<img>").attr(
             "src",
@@ -153,62 +153,77 @@ $(document).ready(function () {
               response.list[i].weather[0].icon +
               ".png"
           );
+
+          //stops working here
           //temp and humidity
           var temp = $("<p>")
             .addClass("card-text")
-            .text("Temperature" + response.list[i].main.temp);
+            .text("Temperature:" + response.list[i].main.temp_max + " °F");
+
           var hum = $("<p>")
             .addClass("card-text")
-            .text("Humidity" + response.list[i].main.humidity);
-          //take the column and append it to the the card then card body then append the tittle
+            .text("Humidity: " + response.list[i].main.humidity + " %");
+
+          //take the column and append it to the the card then card body then append the title
 
           columns.append(card.append(cardbody.append(title, image, temp, hum)));
+          $("#forecast .row").append(columns);
         }
         //}
 
         // console.log(response);
-
-        function KtoF(temp) {
-          return (temp - 273.15) * 1.8 + 32;
-        }
       }
     });
   }
 
-  function getuvIndex(lat, lon) {
+  function getUVIndex(lat, lon) {
     var UVIndex =
-      "http://api.openweathermap.org/data/2.5/uvi?appid=" +
-      APIKey +
-      "&lat=" +
+      "http://api.openweathermap.org/data/2.5/uvi?appid=7ba67ac190f85fdba2e2dc6b9d32e93c&lat=" +
+      //APIKey +
+      //"&lat=" +
       lat +
       "&lon=" +
       lon;
+
     $.ajax({
       url: UVIndex,
       method: "GET",
       dataType: "json",
     }).then(function (response) {
-      ///the uv index that is the text of the response
+       
 
-      //button in span tag with the response value
+       
 
-      //if else statement to color the button depending on the UX index
-      var UVIndex = $("<p>").text("UVIndex");
+      
+      var UVIndex = $("<p>").text("UVIndex: ");
       //but variable in a span tag with the bootsrap class of small but and response.valu
-      var btn = $("<span>").addClass(" btn btn-sm").text(response.value);
-      $("#currentCity .card-body").append(UVIndex.append(btn));
+      var btn = $("<span>").addClass("btn btn-sm").text(response.value);
 
-      function KtoF(temp) {
-        return (temp - 273.15) * 1.8 + 32;
+
+     //if else statement to color the button depending on the UX index
+     if (response.value < 3) {
+          btn.addClass("btn-success");
+        }
+        else if (response.value < 7) {
+          btn.addClass("btn-warning");
+        }
+        else {
+          btn.addClass("btn-danger");
+        }
+
+        $("#currentCity .card-body").append(uv.append(btn));
       }
-
-      ///the output of this function will be appended to current city
     });
+  
   }
-  /// get the city if any and upload it to the page
+
+  
+
+/// get the city if any and upload it to the page
   //decalre city list variable and use JSOn parse to the item from local storage
   if (localStorage.getItem("cityList")) {
     cityList = JSON.parse(window.localStorage.getItem("cityList") || []);
+  
     //only add it cityList legth is greater than 0
 
     if (cityList.length > 0) {
@@ -220,6 +235,7 @@ $(document).ready(function () {
       createList(cityList[i]);
     }
   }
+     
 });
 
 $(document).on("click", ".city", function () {
