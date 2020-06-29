@@ -153,7 +153,7 @@ $(document).ready(function () {
       method: "GET",
       dataType: "json",
     }).then(function (response) {
-      var UVIndex = $("<p>").text("UVIndex: ");
+      var UVIndex = $("<p>").text("UV Index: ");
       //but variable in a span tag with the bootsrap class of small but and response.valu
       var btn = $("<span>").addClass("btn btn-sm").text(response.value);
       //if else statement to color the button depending on the UX index
@@ -184,5 +184,6 @@ $(document).ready(function () {
     var city = $(this).attr("data-name");
     currentCondition(city);
     fiveDayForecast(city);
+    getUVIndex(city);
   });
 });
