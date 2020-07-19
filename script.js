@@ -85,7 +85,7 @@ $(document).ready(function () {
       $("#currentCity").append(card);
       //call other two functions for ajax calls for the forecast pass in the city and  UX index pass in lon and lat
       fiveDayForecast(city);
-      getuvIndex(response.coord.lat, response.coord.lon);
+      getUVIndex(response.coord.lat, response.coord.lon);
     });
   }
   function fiveDayForecast(city) {
@@ -144,13 +144,14 @@ $(document).ready(function () {
   function getUVIndex(lat, lon) {
     $.ajax({
       url:
-        "https://api.openweathermap.org/data/2.5/uvi?appid=7ba67ac190f85fdba2e2dc6b9d32e93c&lat=" +
+        "https://api.openweathermap.org/data/2.5/uvi?appid=4283d387c93df34e548fe4d99a04d307&lat=" +
         lat +
         "&lon=" +
         lon,
       method: "GET",
       dataType: "json",
     }).then(function (response) {
+      console.log(response);
       var uv = $("<p>").text("UV Index: ");
       //but variable in a span tag with the bootsrap class of small but and response.valu
       var btn = $("<span>").addClass("btn btn-sm").text(response.value);
